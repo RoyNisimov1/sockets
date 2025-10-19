@@ -2,17 +2,20 @@ import socket
 import random
 import datetime
 
-HOST = '127.0.0.1'  # Standard loopback interface address (localhost)
-PORT = 65432        # Port to listen on (non-privileged ports are > 1023)
+HOST = '0.0.0.0'
+
+PORT = 65432
 
 COMMAND_TIME = b"TIME"
-COMMAND_WHORU = b"WHOR"
+COMMAND_WHORU = b"NAME"
 COMMAND_RAND = b"RAND"
+COMMAND_MAX = b"MAX "
 COMMAND_EXIT = b"EXIT"
+COMMAND_POW = b"POW "
 
 SERVER_NAME = "Roy's Server"
 
-commands = [COMMAND_EXIT, COMMAND_TIME, COMMAND_WHORU, COMMAND_RAND]
+commands = [COMMAND_EXIT, COMMAND_TIME, COMMAND_WHORU, COMMAND_RAND, COMMAND_POW]
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.bind((HOST, PORT))
@@ -34,4 +37,16 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 data_to_send = str(datetime.datetime.now()).encode()
             if command_type == COMMAND_WHORU:
                 data_to_send = SERVER_NAME.encode("utf-8")
+            if command_type == COMMAND_MAX:
+                first_num = int(conn.recv(4).decode())
+                conn.recv(1)
+                second_num = int(conn.recv(4).decode())
+                m = max(first_num, second_num)
+                data_to_send = str(m).encode()
+            if command_type == COMMAND_POW:
+                first_num = int(conn.recv(4).decode())
+                conn.recv(1)
+                second_num = int(conn.recv(4).decode())
+                m = pow(first_num, second_num)
+                data_to_send = str(m).encode()
             conn.send(data_to_send)
