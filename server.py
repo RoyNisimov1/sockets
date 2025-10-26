@@ -18,28 +18,60 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     with conn:
         print(f"Connected by {addr}")
         while True:
-            command = Protocol.get_msg(conn).split(b" ")
-            command_type = command[0]
-            data_to_send = b""
-            if not command_type or command_type == Protocol.COMMAND_EXIT:
-                conn.close()
-                break
-            if not Protocol.verify_command(command_type):
-                data_to_send = b"400 Bad server request"
-            if command_type == Protocol.COMMAND_RAND:
-                data_to_send = str(random.Random().randint(0, 100)).encode("utf-8")
-            if command_type == Protocol.COMMAND_TIME:
-                data_to_send = str(datetime.datetime.now()).encode()
-            if command_type == Protocol.COMMAND_WHORU:
-                data_to_send = SERVER_NAME.encode("utf-8")
-            if command_type == Protocol.COMMAND_MAX:
-                first_num = int(command[1].decode())
-                second_num = int(command[2].decode())
-                m = max(first_num, second_num)
-                data_to_send = str(m).encode()
-            if command_type == Protocol.COMMAND_POW:
-                first_num = int(command[1].decode())
-                second_num = int(command[2].decode())
-                m = pow(first_num, second_num)
-                data_to_send = str(m).encode()
-            conn.send(Protocol.create_msg(data_to_send))
+            try:
+                command = Protocol.get_msg(conn).split(b" ")
+                command_type = command[0]
+                data_to_send = b""
+                if not command_type or command_type == Protocol.COMMAND_EXIT:
+                    conn.close()
+                    break
+                elif not Protocol.verify_command(command_type):
+                    data_to_send = b"400 Bad server request"
+                elif command_type == Protocol.COMMAND_RAND:
+                    max_num = 100
+                    min_num = 0
+                    if len(command) == 2:
+                        min_num = int(command[1].decode())
+                    if len(command) == 3:
+                        max_num = int(command[2].decode())
+                    data_to_send = str(random.Random().randint(min_num, max_num)).encode("utf-8")
+                elif command_type == Protocol.COMMAND_TIME:
+                    data_to_send = str(datetime.datetime.now()).encode()
+                elif command_type == Protocol.COMMAND_WHORU:
+                    data_to_send = SERVER_NAME.encode("utf-8")
+                elif command_type == Protocol.COMMAND_MAX:
+                    first_num = int(command[1].decode())
+                    second_num = int(command[2].decode())
+                    m = max(first_num, second_num)
+                    data_to_send = str(m).encode()
+                elif command_type == Protocol.COMMAND_POW:
+                    first_num = int(command[1].decode())
+                    second_num = int(command[2].decode())
+                    m = pow(first_num, second_num)
+                    data_to_send = str(m).encode()
+                elif command_type == Protocol.COMMAND_ADD:
+                    assert len(command) >= 2
+                    nums = [int(n.decode()) for n in command[1:]]
+                    sum_n = sum(nums)
+                    data_to_send = str(sum_n).encode()
+
+                elif command_type == Protocol.COMMAND_MULTABLE:
+
+                    n = int(command[1])
+                    tblstr = ""
+                    tblstr+="    "
+                    for j in range(1, n + 1):
+                        tblstr+=f"{j:4d}"
+                    tblstr += "\n" + "----" * (n + 1)
+                    tblstr += "\n"
+                    # Print table rows
+                    for i in range(1, n + 1):
+                        tblstr += f"{i:2d} |"
+                        for j in range(1, n + 1):
+                            tblstr+=f"{i * j:4d}"
+                        tblstr+="\n"
+                    data_to_send = tblstr.encode()
+                conn.send(Protocol.create_msg(data_to_send))
+            except Exception:
+                print("Exception occurred!")
+                conn.send(Protocol.create_msg(b"500 Error occurred"))
