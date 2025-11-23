@@ -68,16 +68,16 @@ class Protocol:
         cmd_index = 0
         opened_quotes = False
         while len(cmd) > cmd_index:
-            if cmd[cmd_index].to_bytes() == b" " and not opened_quotes:
+            if cmd[cmd_index].to_bytes(cmd[cmd_index].bit_length(), "big") == b" " and not opened_quotes:
                 i+=1
                 l.append(b"")
                 cmd_index += 1
                 continue
-            if cmd[cmd_index].to_bytes() in [b"'", b'"']:
+            if cmd[cmd_index].to_bytes(cmd[cmd_index].bit_length(), "big") in [b"'", b'"']:
                 opened_quotes = not opened_quotes
                 cmd_index += 1
                 continue
-            l[i] += cmd[cmd_index].to_bytes()
+            l[i] += cmd[cmd_index].to_bytes(cmd[cmd_index].bit_length(), "big")
             cmd_index+=1
         return l
 

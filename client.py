@@ -3,7 +3,7 @@ import socket
 import os
 from protocol import Protocol
 
-HOST = '192.168.6.53'
+HOST = '192.168.7.18'
 HOST = '127.0.0.1'
 PORT = 65432
 
