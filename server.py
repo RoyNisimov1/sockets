@@ -114,6 +114,8 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                     image.save(file_name)
                     Protocol.send_file(conn, file_name)
                     continue
+                elif command_type == Protocol.COMMAND_SEND:
+                    Protocol.send_file(conn, command[1].decode())
 
                 conn.send(Protocol.create_msg(data_to_send))
             except Exception as e:
