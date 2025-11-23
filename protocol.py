@@ -29,7 +29,7 @@ class Protocol:
         if len(l) > 4: raise Exception(f"Data {data} is too big to send in one packet!")
         for _ in range(4 - len(l)):
             l.insert(0, 0)
-        prepending_bytes = b"".join([l[i].to_bytes() for i in range(4)])
+        prepending_bytes = b"".join([l[i].to_bytes(1, "little") for i in range(4)])
         return prepending_bytes + data
 
     @staticmethod
@@ -68,16 +68,16 @@ class Protocol:
         cmd_index = 0
         opened_quotes = False
         while len(cmd) > cmd_index:
-            if cmd[cmd_index].to_bytes(cmd[cmd_index].bit_length(), "big") == b" " and not opened_quotes:
-                i+=1
+            if cmd[cmd_index].to_bytes(1, "little") == b" " and not opened_quotes:
+                i += 1
                 l.append(b"")
                 cmd_index += 1
                 continue
-            if cmd[cmd_index].to_bytes(cmd[cmd_index].bit_length(), "big") in [b"'", b'"']:
+            if cmd[cmd_index].to_bytes(1, "little") in [b"'", b'"']:
                 opened_quotes = not opened_quotes
                 cmd_index += 1
                 continue
-            l[i] += cmd[cmd_index].to_bytes(cmd[cmd_index].bit_length(), "big")
+            l[i] += cmd[cmd_index].to_bytes(1, "little")
             cmd_index+=1
         return l
 
