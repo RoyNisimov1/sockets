@@ -4,6 +4,7 @@ import datetime
 import os
 import glob
 import json
+import shutil
 from protocol import Protocol
 HOST = '0.0.0.0'
 
@@ -86,6 +87,20 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                         dir_list = [os.path.basename(os.path.dirname(d)) for d in dir_list]
                         d = {"files": files_list, "dirs": dir_list}
                         data_to_send = json.dumps(d).encode()
+                elif command_type == Protocol.COMMAND_DELETE:
+                    try:
+                        data_to_send = b"Path does not exist!"
+
+                        if os.path.exists(command[1].decode()):
+                            if os.path.isdir(command[1].decode()):
+                                shutil.rmtree(command[1].decode())
+                            else:
+                                os.remove(command[1].decode())
+                            data_to_send = b"Deleted successfully"
+                    except Exception as e:
+                        print("Error occurred")
+                        data_to_send = b"Error occurred"
+
 
 
 

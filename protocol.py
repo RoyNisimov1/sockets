@@ -9,8 +9,12 @@ class Protocol:
     COMMAND_ADD = b"ADD"
     COMMAND_MULTABLE = b"MULTBL"
     COMMAND_DIR = b"DIR"
+    COMMAND_DELETE = b"DELETE"
 
-    commands = [COMMAND_EXIT, COMMAND_TIME, COMMAND_WHORU, COMMAND_RAND, COMMAND_MAX,COMMAND_POW, COMMAND_ADD, COMMAND_MULTABLE, COMMAND_DIR]
+    commands = [COMMAND_EXIT, COMMAND_TIME, COMMAND_WHORU,
+                COMMAND_RAND, COMMAND_MAX, COMMAND_POW, COMMAND_ADD,
+                COMMAND_MULTABLE, COMMAND_DIR, COMMAND_DELETE
+                ]
 
     @staticmethod
     def create_msg(data: bytes) -> bytes:
