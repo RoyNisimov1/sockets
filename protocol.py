@@ -93,7 +93,6 @@ class Protocol:
     def recv_file(working_socket: socket.socket):
         size = int(Protocol.get_msg(working_socket).decode())
         b = working_socket.recv(size)
-        working_socket.recv(1024)
         return b
 
 
