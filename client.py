@@ -16,10 +16,14 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.connect((HOST, PORT))
     while True:
         input_command = get_input()
+        cmds = Protocol.parse_command(input_command)
         s.sendall(Protocol.create_msg(input_command))
         if input_command == Protocol.COMMAND_EXIT:
             break
+        if cmds[0] == Protocol.COMMAND_DIR:
+            data = Protocol.get_msg(s).decode()
 
+            continue
         data = Protocol.get_msg(s)
         cmd = data.split(b" ")[0]
         print(cmd)

@@ -1,6 +1,9 @@
 import socket
 import random
 import datetime
+import os
+import glob
+import json
 from protocol import Protocol
 HOST = '0.0.0.0'
 
@@ -19,8 +22,10 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         print(f"Connected by {addr}")
         while True:
             try:
-                command = Protocol.get_msg(conn).split(b" ")
+                command = Protocol.get_msg(conn)
+                command = Protocol.parse_command(command)
                 command_type = command[0]
+                print(command_type)
                 data_to_send = b""
                 if not command_type or command_type == Protocol.COMMAND_EXIT:
                     conn.close()
@@ -71,7 +76,21 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                             tblstr+=f"{i * j:4d}"
                         tblstr+="\n"
                     data_to_send = tblstr.encode()
+                elif command_type == Protocol.COMMAND_DIR:
+                    if not os.path.exists(command[1].decode()): data_to_send = b"path doesn't exist"
+                    else:
+                        files_list = glob.glob(os.path.join(command[1].decode(), "*.*"))
+                        dir_list = glob.glob(os.path.join(command[1].decode(), "*/"))
+
+                        files_list = [os.path.basename(f) for f in files_list]
+                        dir_list = [os.path.basename(os.path.dirname(d)) for d in dir_list]
+                        d = {"files": files_list, "dirs": dir_list}
+                        data_to_send = json.dumps(d).encode()
+
+
+
                 conn.send(Protocol.create_msg(data_to_send))
-            except Exception:
+            except Exception as e:
                 print("Exception occurred!")
+                print(e)
                 conn.send(Protocol.create_msg(b"500 Error occurred"))
