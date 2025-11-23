@@ -1,3 +1,4 @@
+import os
 import socket
 class Protocol:
     COMMAND_TIME = b"TIME"
@@ -10,10 +11,13 @@ class Protocol:
     COMMAND_MULTABLE = b"MULTBL"
     COMMAND_DIR = b"DIR"
     COMMAND_DELETE = b"DELETE"
+    COMMAND_COPY = b"COPY"
+    COMMAND_EXECUTE = b"EXECUTE"
+    COMMAND_TAKE_SCREENSHOT = b"TAKE_SCREENSHOT"
 
     commands = [COMMAND_EXIT, COMMAND_TIME, COMMAND_WHORU,
                 COMMAND_RAND, COMMAND_MAX, COMMAND_POW, COMMAND_ADD,
-                COMMAND_MULTABLE, COMMAND_DIR, COMMAND_DELETE
+                COMMAND_MULTABLE, COMMAND_DIR, COMMAND_DELETE, COMMAND_COPY, COMMAND_EXECUTE, COMMAND_TAKE_SCREENSHOT
                 ]
 
     @staticmethod
@@ -74,6 +78,21 @@ class Protocol:
             l[i] += cmd[cmd_index].to_bytes()
             cmd_index+=1
         return l
+
+    @staticmethod
+    def send_file(working_socket: socket.socket, file_path: str):
+        if os.path.exists(file_path):
+            with open(file_path, "rb") as f:
+                b = f.read()
+            working_socket.sendall(Protocol.create_msg(str(len(b)).encode()))
+            working_socket.sendall(b)
+
+    @staticmethod
+    def recv_file(working_socket: socket.socket):
+        size = int(Protocol.get_msg(working_socket).decode())
+        return working_socket.recv(size)
+
+
 if __name__ == '__main__':
     print(Protocol.parse_command(b"main test 'lol and lol' te1"))
     print(Protocol.parse_command(b"TIME"))

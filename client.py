@@ -42,11 +42,18 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                     print(directory)
                 print("---------------------")
                 continue
+
+            if cmds[0] == Protocol.COMMAND_TAKE_SCREENSHOT:
+                if len(cmds) > 1:
+                    with open(cmds[1], "wb") as f:
+                        f.write(Protocol.recv_file(s))
+                else:
+                    with open("Screenshot.jpg", "wb") as f:
+                        f.write(Protocol.recv_file(s))
+                continue
+
+
             data = Protocol.get_msg(s)
-            cmd = data.split(b" ")[0]
-            print(cmd)
-            if cmd == Protocol.COMMAND_MULTABLE:
-                print("Command is multtbl")
             print(data.decode())
         except Exception as e:
             print("An exception occurred: ", e)

