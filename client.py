@@ -21,4 +21,8 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             break
 
         data = Protocol.get_msg(s)
+        cmd = data.split(b" ")[0]
+        print(cmd)
+        if cmd == Protocol.COMMAND_MULTABLE:
+            print("Command is multtbl")
         print(data.decode())

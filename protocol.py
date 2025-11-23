@@ -27,3 +27,4 @@ class Protocol:
     @staticmethod
     def verify_command(cmd: bytes):
         return cmd in Protocol.commands
+

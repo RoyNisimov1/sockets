@@ -58,7 +58,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 elif command_type == Protocol.COMMAND_MULTABLE:
 
                     n = int(command[1])
-                    tblstr = ""
+                    tblstr = "MULTBL \n"
                     tblstr+="    "
                     for j in range(1, n + 1):
                         tblstr+=f"{j:4d}"
