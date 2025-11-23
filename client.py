@@ -4,7 +4,7 @@ import os
 from protocol import Protocol
 
 HOST = '192.168.7.18'
-#HOST = '127.0.0.1'
+HOST = '127.0.0.1'
 PORT = 65432
 
 

