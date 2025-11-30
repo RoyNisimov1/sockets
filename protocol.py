@@ -94,7 +94,12 @@ class Protocol:
     @staticmethod
     def recv_file(working_socket: socket.socket):
         size = int(Protocol.get_msg(working_socket).decode())
-        b = working_socket.recv(size)
+        s = 0
+        b = b""
+        while s < size:
+            data = working_socket.recv(size)
+            b += data
+            s += len(data)
         return b
 
 
