@@ -3,8 +3,8 @@ import socket
 import os
 from protocol import Protocol
 
-HOST = '192.168.4.108'
-HOST = '127.0.0.1'
+HOST = '192.168.7.18'
+#HOST = '127.0.0.1.jpg'
 PORT = 65432
 
 
@@ -53,6 +53,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                         f.write(Protocol.recv_file(s))
                 continue
             if cmds[0] == Protocol.COMMAND_SEND:
+                print("--------------- Receiving File ---------------")
                 if len(cmds) == 3:
                     with open(os.path.basename(cmds[2]), "wb") as f:
                         f.write(Protocol.recv_file(s))
