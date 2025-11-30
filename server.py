@@ -6,6 +6,8 @@ import glob
 import json
 import shutil
 import subprocess
+from time import sleep
+
 import pyautogui
 from protocol import Protocol
 HOST = '0.0.0.0'
@@ -109,8 +111,11 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                     subprocess.Popen(command[1].decode())
                     data_to_send = b"Executed successfully"
                 elif command_type == Protocol.COMMAND_TAKE_SCREENSHOT:
+                    sec = int(command[2])
+                    file_name = command[1].decode()
+                    if os.path.splitext(file_name)[-1] != ".jpg": file_name+=".jpg"
+                    sleep(sec)
                     image = pyautogui.screenshot()
-                    file_name = "ss.jpg"
                     image.save(file_name)
                     Protocol.send_file(conn, file_name)
                     continue
