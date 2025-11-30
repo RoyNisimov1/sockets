@@ -53,8 +53,12 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                         f.write(Protocol.recv_file(s))
                 continue
             if cmds[0] == Protocol.COMMAND_SEND:
-                with open(os.path.basename(cmds[1]), "wb") as f:
-                    f.write(Protocol.recv_file(s))
+                if len(cmds) == 3:
+                    with open(os.path.basename(cmds[2]), "wb") as f:
+                        f.write(Protocol.recv_file(s))
+                else:
+                    with open(os.path.basename(cmds[1]), "wb") as f:
+                        f.write(Protocol.recv_file(s))
 
             data = Protocol.get_msg(s)
             print(data.decode())

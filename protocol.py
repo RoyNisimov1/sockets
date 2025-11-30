@@ -86,8 +86,10 @@ class Protocol:
         if os.path.exists(file_path):
             with open(file_path, "rb") as f:
                 b = f.read()
-            working_socket.sendall(Protocol.create_msg(str(len(b)).encode()))
+            working_socket.send(Protocol.create_msg(str(len(b)).encode()))
             working_socket.sendall(b)
+        else:
+            working_socket.send(Protocol.create_msg(b"Failed to send!"))
 
     @staticmethod
     def recv_file(working_socket: socket.socket):
